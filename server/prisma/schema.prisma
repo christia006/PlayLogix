@@ -1,0 +1,98 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int      @id @default(autoincrement())
+  role            Role     @default(USER)
+  email           String   @unique
+  createdDate     DateTime @default(now())
+  active  Boolean @default(true)
+  fullName        String
+  image String @default("https://social-network-js.vercel.app/img/profile5.png")
+  password        String
+  passwordConfirm String?
+  reviews         Review[]
+
+  @@map("users")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model Game {
+  id            Int      @id @default(autoincrement())
+  name          String
+  releaseYear   String
+  description   String
+  writers       String[]
+  stars         String[]
+  photos        String[]
+  price         String
+  gameplayHours String
+  trailer       String
+  thumbnail     String
+  rating        Int @default(0)
+  reviews        Review[]
+  consoles      GameConsole[]  
+  genres         GameGenre[]
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int
+  game      Game     @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  gameId    Int
+  rating    Int 
+  content   String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, gameId]) 
+}
+
+model Console {
+  id      Int       @id @default(autoincrement())
+  name String @unique
+  image String
+  games GameConsole[]
+}
+
+model GameConsole {
+  gameId Int
+  consoleId Int
+
+  game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  console Console @relation(fields: [consoleId], references: [id])
+
+  @@id([gameId, consoleId])
+}
+
+model Genre {
+   id      Int       @id @default(autoincrement())
+  name String @unique
+  games GameGenre[]
+}
+
+model GameGenre {
+  gameId Int
+  genreId Int
+
+ game Game @relation(fields: [gameId], references: [id], onDelete: Cascade)
+  genre Genre @relation(fields: [genreId], references: [id])
+
+  @@id([gameId, genreId])
+}

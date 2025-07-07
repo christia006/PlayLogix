@@ -1,0 +1,22 @@
+@import "tailwindcss";
+
+/* @custom-variant dark (&where(.dark, .dark *)); */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@theme {
+  --color-dark-deep-red: #3d0000;
+  --color-dark-dark-red: #950101;
+}
+
+.icon-small {
+  width: 1rem;
+  height: 1rem;
+}
+.icon-medium {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.icon-big {
+  width: 2rem;
+  height: 2rem;
+}
